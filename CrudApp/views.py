@@ -1,6 +1,10 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render
-from .forms import myForm
+
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import AuthenticationForm
+
+from .forms import myForm, NewUserForm
 from .models import std
 
 
@@ -36,3 +40,37 @@ def ShowAllStd(request):
 def DeleteStd(request, pk):
     std.objects.get(id=pk).delete()
     return redirect('all_std')
+
+
+def RegisterForm(request):
+    if request.method == "POST":
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect("login")
+    form = NewUserForm()
+    return render(request=request, template_name="register.html", context={"register_form": form})
+
+
+def LoginForm(request):
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect("all_std")
+            else:
+                messages.error(request, "Invalid username or password.")
+        else:
+            messages.error(request, "Invalid username or password.")
+    form = AuthenticationForm()
+    return render(request=request, template_name="login.html", context={"login_form": form})
+
+
+def LogoutForm(request):
+    logout(request)
+    return redirect("login")

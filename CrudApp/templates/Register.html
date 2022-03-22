@@ -1,0 +1,15 @@
+{% block content %}
+<p>{{message}}</p>
+{% endblock %}
+
+<form action="" method="post">
+    <table cellspacing="10" style="margin-top:50px; font-size:20px;">
+        {% csrf_token %}
+        {{ register_form.as_table }}
+        <tr>
+            <td></td>
+            <td><input type="submit"></td>
+        </tr>
+    </table>
+</form>
+<a href="{% url 'login' %}">Login</a>
