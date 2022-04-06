@@ -6,7 +6,7 @@ class course(models.Model):
     course = models.CharField(max_length=20)
 
     def __str__(self):
-        self.course
+        return self.course
 
 
 gender_choice = (
